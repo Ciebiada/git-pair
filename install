@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+curl -sL -o /usr/local/bin/git-pair https://raw.githubusercontent.com/Ciebiada/git-pair/master/bin/git-pair
+chmod +x /usr/local/bin/git-pair
+echo "Installed in /usr/local/bin/git-pair"
