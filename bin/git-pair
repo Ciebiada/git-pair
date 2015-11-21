@@ -3,70 +3,70 @@
 MAIN_DIR=~/.git-pair
 
 function show_usage {
-        printf "usage: git-pair <command> [<args>]\n\n"
-        printf "Available commands are:\n"
-        printf "    add     <name> <full-name> <e-mail> [<path-to-private-key>]\n"
-        printf "    set    <primary-name> [<secondary-name>]\n"
-        printf "    remove  <name>\n"
-        printf "    show    <name>\n"
-        printf "    list\n"
+  printf "usage: git-pair <command> [<args>]\n\n"
+  printf "Available commands are:\n"
+  printf "    add     <name> <full-name> <e-mail> [<path-to-private-key>]\n"
+  printf "    set     <primary-name> [<secondary-name>]\n"
+  printf "    remove  <name>\n"
+  printf "    show    <name>\n"
+  printf "    list\n"
 }
 
 function pair {
-        sed -E -i "" "s/(^[[:space:]]*name).*/\1 = $2/" ~/.gitconfig
-        sed -E -i "" "s/(^[[:space:]]*email).*/\1 = $3/" ~/.gitconfig
-        printf "~/.gitconfig modified\n"
+  sed -E -i "" "s/(^[[:space:]]*name).*/\1 = $2/" ~/.gitconfig
+  sed -E -i "" "s/(^[[:space:]]*email).*/\1 = $3/" ~/.gitconfig
+  printf "~/.gitconfig modified\n"
 
-        if [ -f "$MAIN_DIR/keys/$1" ]; then
-          touch ~/.bash_profile
-          if [ -z "`grep 'export GIT_SSH_COMMAND' ~/.bash_profile`" ]; then
-                  echo "export GIT_SSH_COMMAND='ssh -i $MAIN_DIR/keys/$1'" >> ~/.bash_profile
-          else
-                  sed -E -i "" "s/(^[[:space:]]*export GIT_SSH_COMMAND).*/\1='ssh -i ~\/.gitp\/keys\/$1'/" ~/.bash_profile
-          fi
-          printf "~/.bash_profile modified (source it or restart your terminal)\n"
-        fi
+  if [ -f "$MAIN_DIR/keys/$1" ]; then
+    touch ~/.bash_profile
+    if [ -z "`grep 'export GIT_SSH_COMMAND' ~/.bash_profile`" ]; then
+      echo "export GIT_SSH_COMMAND='ssh -i $MAIN_DIR/keys/$1'" >> ~/.bash_profile
+    else
+      sed -E -i "" "s/(^[[:space:]]*export GIT_SSH_COMMAND).*/\1='ssh -i ~\/.gitp\/keys\/$1'/" ~/.bash_profile
+    fi
+    printf "~/.bash_profile modified (source it or restart your terminal)\n"
+  fi
 }
 
 mkdir -p $MAIN_DIR/users
 mkdir -p $MAIN_DIR/keys
 
 case "$1" in
-        "add")
-                printf "$3\n$4\n" > $MAIN_DIR/users/$2
-                if [ -n "$5" ]; then
-                  cp $5 $MAIN_DIR/keys/$2
-                  chmod 400 $MAIN_DIR/keys/$2
-                fi
-                printf "$2 added\n"
-                ;;
-        "set")
-                FIRST_NAME=`sed -n 1p $MAIN_DIR/users/$2`
-                FIRST_EMAIL=`sed -n 2p $MAIN_DIR/users/$2`
+  "add")
+    printf "$3\n$4\n" > $MAIN_DIR/users/$2
+    if [ -n "$5" ]; then
+      cp $5 $MAIN_DIR/keys/$2
+      chmod 400 $MAIN_DIR/keys/$2
+    fi
+    printf "$2 added\n"
+    ;;
+  "set")
+    FIRST_NAME=`sed -n 1p $MAIN_DIR/users/$2`
+    FIRST_EMAIL=`sed -n 2p $MAIN_DIR/users/$2`
 
-                if [ -n "$3" ]; then
-                  SECOND_NAME=`sed -n 1p $MAIN_DIR/users/$3`
-                  SECOND_EMAIL=`sed -n 2p $MAIN_DIR/users/$3`
+    if [ -n "$3" ]; then
+      SECOND_NAME=`sed -n 1p $MAIN_DIR/users/$3`
+      SECOND_EMAIL=`sed -n 2p $MAIN_DIR/users/$3`
 
-                  pair $2 "$FIRST_NAME, $SECOND_NAME" "$FIRST_EMAIL, $SECOND_EMAIL"
-                else
-                  pair $2 "$FIRST_NAME" "$FIRST_EMAIL"
-                fi
-                ;;
-        "remove")
-                rm $MAIN_DIR/users/$2
-                if [ -f "$MAIN_DIR/keys/$1" ]; then
-                  rm $MAIN_DIR/keys/$2
-                fi
-                printf "$2 removed\n"
-                ;;
-        "show")
-                cat $MAIN_DIR/users/$2
-                ;;
-        "list")
-                ls $MAIN_DIR/users/
-                ;;
-        *)
-                show_usage
-                ;;
+      pair $2 "$FIRST_NAME, $SECOND_NAME" "$FIRST_EMAIL, $SECOND_EMAIL"
+    else
+      pair $2 "$FIRST_NAME" "$FIRST_EMAIL"
+    fi
+    ;;
+  "remove")
+    rm $MAIN_DIR/users/$2
+    if [ -f "$MAIN_DIR/keys/$1" ]; then
+      rm $MAIN_DIR/keys/$2
+    fi
+    printf "$2 removed\n"
+    ;;
+  "show")
+    cat $MAIN_DIR/users/$2
+    ;;
+  "list")
+    ls $MAIN_DIR/users/
+    ;;
+  *)
+    show_usage
+    ;;
 esac
