@@ -6,8 +6,7 @@ function show_usage {
         printf "usage: git-pair <command> [<args>]\n\n"
         printf "Available commands are:\n"
         printf "    add     <name> <full-name> <e-mail> [<path-to-private-key>]\n"
-        printf "    pair    <primary-name> <secondary-name>\n"
-        printf "    solo    <name>\n"
+        printf "    set    <primary-name> [<secondary-name>]\n"
         printf "    remove  <name>\n"
         printf "    show    <name>\n"
         printf "    list\n"
@@ -41,23 +40,24 @@ case "$1" in
                 fi
                 printf "$2 added\n"
                 ;;
-        "pair")
+        "set")
                 FIRST_NAME=`sed -n 1p $MAIN_DIR/users/$2`
-                SECOND_NAME=`sed -n 1p $MAIN_DIR/users/$3`
-                NAME="$FIRST_NAME, $SECOND_NAME"
                 FIRST_EMAIL=`sed -n 2p $MAIN_DIR/users/$2`
-                SECOND_EMAIL=`sed -n 2p $MAIN_DIR/users/$3`
-                EMAIL="$FIRST_EMAIL, $SECOND_EMAIL"
-                pair $2 "$NAME" "$EMAIL"
-                ;;
-        "solo")
-                NAME=`sed -n 1p $MAIN_DIR/users/$2`
-                EMAIL=`sed -n 2p $MAIN_DIR/users/$2`
-                pair $2 "$NAME" "$EMAIL"
+
+                if [ -n "$3" ]; then
+                  SECOND_NAME=`sed -n 1p $MAIN_DIR/users/$3`
+                  SECOND_EMAIL=`sed -n 2p $MAIN_DIR/users/$3`
+
+                  pair $2 "$FIRST_NAME, $SECOND_NAME" "$FIRST_EMAIL, $SECOND_EMAIL"
+                else
+                  pair $2 "$FIRST_NAME" "$FIRST_EMAIL"
+                fi
                 ;;
         "remove")
                 rm $MAIN_DIR/users/$2
-                rm $MAIN_DIR/keys/$2
+                if [ -f "$MAIN_DIR/keys/$1" ]; then
+                  rm $MAIN_DIR/keys/$2
+                fi
                 printf "$2 removed\n"
                 ;;
         "show")

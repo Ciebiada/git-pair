@@ -16,7 +16,11 @@ $ git pair add Tyler "Tyler Durden" tyler@company.com ~/Downloads/id_rsa2
 ```
 Pair
 ```sh
-$ git pair michal tyler
+$ git pair set michal tyler
+```
+Not pairing anymore? Easy
+```sh
+$ git pair set michal
 ```
 Profit!
 
