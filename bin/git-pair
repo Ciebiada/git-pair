@@ -22,7 +22,7 @@ function pair {
     if [ -z "`grep 'export GIT_SSH_COMMAND' ~/.bash_profile`" ]; then
       echo "export GIT_SSH_COMMAND='ssh -i $MAIN_DIR/keys/$1'" >> ~/.bash_profile
     else
-      sed -E -i "" "s/(^[[:space:]]*export GIT_SSH_COMMAND).*/\1='ssh -i ~\/.gitp\/keys\/$1'/" ~/.bash_profile
+      sed -E -i "" "s/(^[[:space:]]*export GIT_SSH_COMMAND).*/\1='ssh -i ~\/.git-pair\/keys\/$1'/" ~/.bash_profile
     fi
     printf "~/.bash_profile modified (source it or restart your terminal)\n"
   fi
